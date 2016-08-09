@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ePortal.MailService" GeneratedClassName="AppSetting">
+  <Profiles />
+  <Settings>
+    <Setting Name="Conn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">server=192.168.9.20;database=WVI_WebPortal;uid=sa;pwd=23096199</Value>
+    </Setting>
+    <Setting Name="Interval" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

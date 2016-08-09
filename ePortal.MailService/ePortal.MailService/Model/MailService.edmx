@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MailService.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="MailServiceStoreContainer">
+          <EntitySet Name="MailService_Config" EntityType="MailService.Store.MailService_Config" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="MailService_Sended_Log" EntityType="MailService.Store.MailService_Sended_Log" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="MailService_Sending_Queue" EntityType="MailService.Store.MailService_Sending_Queue" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_MailService_Log_Sending_Queue" Association="MailService.Store.FK_MailService_Log_Sending_Queue">
+            <End Role="MailService_Sending_Queue" EntitySet="MailService_Sending_Queue" />
+            <End Role="MailService_Sended_Log" EntitySet="MailService_Sended_Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MailService_Sending_Queue_Config" Association="MailService.Store.FK_MailService_Sending_Queue_Config">
+            <End Role="MailService_Config" EntitySet="MailService_Config" />
+            <End Role="MailService_Sending_Queue" EntitySet="MailService_Sending_Queue" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="MailService_Config">
+          <Key>
+            <PropertyRef Name="SysID" />
+          </Key>
+          <Property Name="SysID" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="User" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="Pwd" Type="nvarchar" Nullable="false" MaxLength="100" />
+          <Property Name="SMTPClient" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="Port" Type="int" Nullable="false" />
+          <Property Name="Authenticate" Type="int" />
+          <Property Name="SSL" Type="bit" />
+        </EntityType>
+        <EntityType Name="MailService_Sended_Log">
+          <Key>
+            <PropertyRef Name="LogID" />
+          </Key>
+          <Property Name="LogID" Type="bigint" Nullable="false" />
+          <Property Name="ID" Type="bigint" Nullable="false" />
+          <Property Name="Subject" Type="nvarchar" Nullable="false" MaxLength="200" />
+          <Property Name="To" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CC" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Bcc" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Body" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SysID" Type="varchar" Nullable="false" MaxLength="100" />
+          <Property Name="SendTime" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MailService_Sending_Queue">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Subject" Type="nvarchar" Nullable="false" MaxLength="200" />
+          <Property Name="To" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CC" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Bcc" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="Body" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SysID" Type="varchar" Nullable="false" MaxLength="100" />
+        </EntityType>
+        <Association Name="FK_MailService_Log_Sending_Queue">
+          <End Role="MailService_Sending_Queue" Type="MailService.Store.MailService_Sending_Queue" Multiplicity="1" />
+          <End Role="MailService_Sended_Log" Type="MailService.Store.MailService_Sended_Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MailService_Sending_Queue">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="MailService_Sended_Log">
+              <PropertyRef Name="ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MailService_Sending_Queue_Config">
+          <End Role="MailService_Config" Type="MailService.Store.MailService_Config" Multiplicity="1" />
+          <End Role="MailService_Sending_Queue" Type="MailService.Store.MailService_Sending_Queue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MailService_Config">
+              <PropertyRef Name="SysID" />
+            </Principal>
+            <Dependent Role="MailService_Sending_Queue">
+              <PropertyRef Name="SysID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="MailService" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityContainer Name="MailServiceContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="MailService_Config" EntityType="MailService.MailService_Config" />
+          <EntitySet Name="MailService_Sended_Log" EntityType="MailService.MailService_Sended_Log" />
+          <EntitySet Name="MailService_Sending_Queue" EntityType="MailService.MailService_Sending_Queue" />
+          <AssociationSet Name="FK_MailService_Sending_Queue_Config" Association="MailService.FK_MailService_Sending_Queue_Config">
+            <End Role="MailService_Config" EntitySet="MailService_Config" />
+            <End Role="MailService_Sending_Queue" EntitySet="MailService_Sending_Queue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MailService_Log_Sending_Queue" Association="MailService.FK_MailService_Log_Sending_Queue">
+            <End Role="MailService_Sending_Queue" EntitySet="MailService_Sending_Queue" />
+            <End Role="MailService_Sended_Log" EntitySet="MailService_Sended_Log" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="MailService_Config">
+          <Key>
+            <PropertyRef Name="SysID" />
+          </Key>
+          <Property Type="String" Name="SysID" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="User" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Pwd" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SMTPClient" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="Port" Nullable="false" />
+          <Property Type="Int32" Name="Authenticate" />
+          <Property Type="Boolean" Name="SSL" />
+          <NavigationProperty Name="MailService_Sending_Queue" Relationship="MailService.FK_MailService_Sending_Queue_Config" FromRole="MailService_Config" ToRole="MailService_Sending_Queue" />
+        </EntityType>
+        <EntityType Name="MailService_Sended_Log">
+          <Key>
+            <PropertyRef Name="LogID" />
+          </Key>
+          <Property Type="Int64" Name="LogID" Nullable="false" />
+          <Property Type="Int64" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Subject" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="To" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="CC" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Bcc" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Body" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SysID" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="SendTime" Nullable="false" />
+          <NavigationProperty Name="MailService_Sending_Queue" Relationship="MailService.FK_MailService_Log_Sending_Queue" FromRole="MailService_Sended_Log" ToRole="MailService_Sending_Queue" />
+        </EntityType>
+        <EntityType Name="MailService_Sending_Queue">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int64" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Subject" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="To" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="CC" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Bcc" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Body" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SysID" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="MailService_Config" Relationship="MailService.FK_MailService_Sending_Queue_Config" FromRole="MailService_Sending_Queue" ToRole="MailService_Config" />
+          <NavigationProperty Name="MailService_Sended_Log" Relationship="MailService.FK_MailService_Log_Sending_Queue" FromRole="MailService_Sending_Queue" ToRole="MailService_Sended_Log" />
+        </EntityType>
+        <Association Name="FK_MailService_Sending_Queue_Config">
+          <End Type="MailService.MailService_Config" Role="MailService_Config" Multiplicity="1" />
+          <End Type="MailService.MailService_Sending_Queue" Role="MailService_Sending_Queue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MailService_Config">
+              <PropertyRef Name="SysID" />
+            </Principal>
+            <Dependent Role="MailService_Sending_Queue">
+              <PropertyRef Name="SysID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MailService_Log_Sending_Queue">
+          <End Type="MailService.MailService_Sending_Queue" Role="MailService_Sending_Queue" Multiplicity="1" />
+          <End Type="MailService.MailService_Sended_Log" Role="MailService_Sended_Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MailService_Sending_Queue">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="MailService_Sended_Log">
+              <PropertyRef Name="ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="MailService" />
+        <Alias Key="Target" Value="MailService.Store" />
+        <EntityContainerMapping CdmEntityContainer="MailServiceContainer" StorageEntityContainer="MailServiceStoreContainer">
+          <EntitySetMapping Name="MailService_Config">
+            <EntityTypeMapping TypeName="MailService.MailService_Config">
+              <MappingFragment StoreEntitySet="MailService_Config">
+                <ScalarProperty Name="SSL" ColumnName="SSL" />
+                <ScalarProperty Name="Authenticate" ColumnName="Authenticate" />
+                <ScalarProperty Name="Port" ColumnName="Port" />
+                <ScalarProperty Name="SMTPClient" ColumnName="SMTPClient" />
+                <ScalarProperty Name="Pwd" ColumnName="Pwd" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="SysID" ColumnName="SysID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MailService_Sended_Log">
+            <EntityTypeMapping TypeName="MailService.MailService_Sended_Log">
+              <MappingFragment StoreEntitySet="MailService_Sended_Log">
+                <ScalarProperty Name="SendTime" ColumnName="SendTime" />
+                <ScalarProperty Name="SysID" ColumnName="SysID" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Bcc" ColumnName="Bcc" />
+                <ScalarProperty Name="CC" ColumnName="CC" />
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="LogID" ColumnName="LogID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MailService_Sending_Queue">
+            <EntityTypeMapping TypeName="MailService.MailService_Sending_Queue">
+              <MappingFragment StoreEntitySet="MailService_Sending_Queue">
+                <ScalarProperty Name="SysID" ColumnName="SysID" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Bcc" ColumnName="Bcc" />
+                <ScalarProperty Name="CC" ColumnName="CC" />
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram Name="MailService" >
+        <EntityTypeShape EntityType="MailService.MailService_Config" Width="2" PointX="3.125" PointY="1.625" Height="2.5430916341145817" />
+        <EntityTypeShape EntityType="MailService.MailService_Sended_Log" Width="2.5" PointX="9.375" PointY="1.5" Height="2.9251310221354156" />
+        <EntityTypeShape EntityType="MailService.MailService_Sending_Queue" Width="2.25" PointX="5.875" PointY="1.75" Height="2.7341113281249996" />
+        <AssociationConnector Association="MailService.FK_MailService_Sending_Queue_Config" >
+          <ConnectorPoint PointX="5.125" PointY="2.9590458170572909" />
+          <ConnectorPoint PointX="5.875" PointY="2.9590458170572909" />
+        </AssociationConnector>
+        <AssociationConnector Association="MailService.FK_MailService_Log_Sending_Queue" >
+          <ConnectorPoint PointX="8.125" PointY="3.0875655110677078" />
+          <ConnectorPoint PointX="9.375" PointY="3.0875655110677078" />
+        </AssociationConnector>
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
