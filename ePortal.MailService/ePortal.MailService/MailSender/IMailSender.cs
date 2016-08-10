@@ -6,6 +6,8 @@ using ePortal.MailService.Model;
 
 namespace ePortal.MailService.MailSender
 {
+    public delegate void SenderCallback(MailModel);
+
     interface IMailSender
     {
         void Send(MailModel model);

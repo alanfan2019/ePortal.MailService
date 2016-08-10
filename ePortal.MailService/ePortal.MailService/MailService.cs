@@ -34,6 +34,7 @@ namespace ePortal.MailService
                 new ThreadFactory.ThreadPipe.Recive_PipeLine()
                 , new ThreadFactory.ThreadPipe.Send_PipeLine()
                 , new ThreadFactory.ThreadPipe.WebService_PipeLine()
+                , new ThreadFactory.ThreadPipe.Schedule_PipeLine()
                 );
 
             _factory.Run();

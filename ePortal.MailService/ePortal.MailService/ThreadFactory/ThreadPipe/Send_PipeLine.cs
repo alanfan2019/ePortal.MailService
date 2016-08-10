@@ -40,9 +40,11 @@ namespace ePortal.MailService.ThreadFactory.ThreadPipe
 
                 sender.Send(mail);
 
-                dataContext.UpdateSchedule(mail.ID);
                 dataContext.LogSendeMail(mail);
                 dataContext.DeleteSendingMail(mail.ID);
+                if(mail._callback != null){
+                    mail._callback(mail);
+                }
 
                 queue.Remove(mail);
             }

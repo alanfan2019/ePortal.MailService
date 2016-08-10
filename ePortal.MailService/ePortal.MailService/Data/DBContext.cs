@@ -17,7 +17,8 @@ namespace ePortal.MailService.Data
         private const string INSERTSENDINGQUEUE = "INSERT INTO MailService_Sending_Queue(Subject, [To], CC, Body, SysID) VALUES(@p1, @p2, @p3, @p4, @p5)";
         private const string DELETESENDINGQUEUE = "DELETE FROM MailService_Sending_Queue WHERE ID = @p1";
         private const string LOGSENDEDMAIL = "INSERT INTO MailService_Sended_Log(ID, Subject, [To], CC, Bcc, Body, SysID, SendTime) VALUES(@p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8)";
-        private const string GETSCHEDULEMAIL = "SELECT q.ID, q.Subject,q.[To],q.CC, c.Bcc, q.Body,c.MailAddress AS [From], c.SMTPClient, c.Port, c.Authenticate, c.[User], c.Pwd, c.SSL from MailService_Schedule q left join MailService_Config c on q.SysID=c.SysID and q.nextSendTime <= GETDATE()";
+        private const string GETSCHEDULEMAIL = "SELECT q.ID, q.Subject,q.[To],q.CC, c.Bcc, q.Body,c.MailAddress AS [From], q.nextSendTime, q.sheduleType, q.scheduleTime, c.SMTPClient, c.Port, c.Authenticate, c.[User], c.Pwd, c.SSL from MailService_Schedule q left join MailService_Config c on q.SysID=c.SysID and q.nextSendTime <= GETDATE()";
+        private const string SETSHEDULEMAIL = "UPDATE MailService_Schedule SET nextSendTime = @p1 WHERE ID = @p2";
         private static Database database;
 
         public DBContext()
@@ -67,7 +68,7 @@ namespace ePortal.MailService.Data
             {
                 while (reader.Read())
                 {
-                    var mail = new MailModel()
+                    var mail = new ScheduleMailModel()
                     {
                         ID = reader.GetInt64(0),
                         Subject = reader.GetString(1),
@@ -76,15 +77,19 @@ namespace ePortal.MailService.Data
                         Bcc = reader.GetString(4),
                         Body = reader.GetString(5),
                         From = reader.GetString(6),
+                        NextSendTime = reader.GETDATE(7),
+                        ScheduleType = (ScheduleType)reader.GetInt32(8),
+                        ScheduleTime = (ScheduleTime)reader.GetInt32(9),
                         Config = new SMTPConfig()
                         {
-                            SMTPClient = reader.GetString(7),
-                            Port = reader.GetInt32(8),
-                            Authenticate = reader.GetInt32(9),
-                            User = reader.GetString(10),
-                            Pwd = reader.GetString(11),
-                            SSL = reader.GetBoolean(12)
-                        }
+                            SMTPClient = reader.GetString(10),
+                            Port = reader.GetInt32(11),
+                            Authenticate = reader.GetInt32(12),
+                            User = reader.GetString(13),
+                            Pwd = reader.GetString(14),
+                            SSL = reader.GetBoolean(15)
+                        },
+                        _callback = new SenderCallback(UpdateSchedule)
                     };
                     mailList.Add(mail);
                 }
@@ -92,8 +97,32 @@ namespace ePortal.MailService.Data
 
             return mailList;
         }
-        public void UpdateSchedule(long id)
+        public void UpdateSchedule(MailModel model)
         {
+            ScheduleMailModel scheduleMailModel = model as ScheduleMailModel;
+            if (scheduleMailModel != null)
+            {
+                var nextSendTime = scheduleMailModel.nextSendTime;
+                switch (scheduleMailModel.ScheduleType)
+                {
+                    case ScheduleType.HOURS:
+                        nextSendTime = nextSendTime.AddHours(scheduleMailModel.ScheduleTime);
+                        break;
+                    case ScheduleType.DAYLY:
+                        nextSendTime = nextSendTime.AddDays(scheduleMailModel.ScheduleTime);
+                        break;
+                    case ScheduleType.MONTHLY:
+                        nextSendTime = nextSendTime.AddMonths(scheduleMailModel.ScheduleTime);
+                        break;
+                    default:
+                }
+
+                SqlCommand cmd = new SqlCommand(SETSHEDULEMAIL);
+                cmd.Parameters.Add("@p1", nextSendTime.ToString());
+                cmd.Parameters.Add("@p2", scheduleMailModel.ID);
+
+                database.ExecuteNonQuery(cmd);
+            }
 
         }
 

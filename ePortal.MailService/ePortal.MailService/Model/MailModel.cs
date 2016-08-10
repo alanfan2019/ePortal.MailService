@@ -66,5 +66,6 @@ namespace ePortal.MailService.Model
             set { _sys = value; }
         }
 
+        SenderCallback _callback = null;
     }
 }
